@@ -1,0 +1,67 @@
+.cont {
+    justify-content: center;
+    align-items: center;
+    margin-top: -350px;
+}
+
+.panel {
+    width: 500px;
+    max-width: 95%;
+    height: 200px;
+    border-radius: 6px;
+    justify-content: center;
+    text-align: center;
+    /* padding: 15px; */
+    box-shadow: 0 2px 10px 0 rgb(0 0 0 / 40% );
+    display: flex;
+    margin: 0 auto;
+}
+
+.p {
+    font-size: 15px;
+}
+
+.welcome {
+    width: 50%;
+    background-color: white;
+    padding: 5px 15px 15px 15px;
+    border-radius: 6px 0 0 6px;
+}
+
+.join {
+    width: 50%;
+    border-radius: 0 6px 6px 0;
+    background-color: white;
+    padding: 15px 15px 15px 15px;
+}
+
+.SearchInput {
+    font-size: 30px;
+    background-color: transparent;
+    outline: 0;
+    max-width: 150px;
+    appearance: none;
+    /* border: none; */
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-width: 1px;
+}
+
+.innerCode {
+    background-color: lightgray;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 20%);
+    border-radius: 2px;
+    height: 150px;
+}
+
+.ActionBar {
+    flex-direction: row;  
+}
+
+.arrow {
+    padding-top: 38px;
+    padding: 3px;
+    padding-left: 5px;
+    cursor: pointer;
+}
