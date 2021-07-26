@@ -1,15 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import styles from '../styles/Multiplayer.module.css'
 
 import BlockElement from '../components/blockelement'
 
-var currentPlayer = 'X';
+import socketIOClient from "socket.io-client";
+
+var currentPlayer = 'X'
+
+let socket;
+
+const ENDPOINT = "http://127.0.0.1:3104";
 
 function multiplayer() {
 
     const [statusDisplay, setStatusDisplay] = useState(`Start Player ${currentPlayer}`);
 
+
+    useEffect(() => {
+        socket = socketIOClient(ENDPOINT + "?created=" + 'true', { secure: true });
+    }, [])
 
     const handleCellClick = () => {
 
@@ -21,8 +31,14 @@ function multiplayer() {
 
     return (
         <div className={'container'}>
+            <div style={{
+                width: '200px'
+            }}>
+                <div style={{ textAlign: 'center' }}>Game Code</div>
+                <h2 style={{ textAlign: 'center' }}>12345</h2>
+            </div>
             <div>
-
+                <br />
                 <section>
                     <h1 className="game__title">Tic Tac Toe</h1>
                     <div className="game__container">

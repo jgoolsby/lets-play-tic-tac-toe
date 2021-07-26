@@ -74,3 +74,11 @@ section {
 .w50 {
   width:  50%;
 }
+
+.blinkme {
+  animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0; }
+}

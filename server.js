@@ -14,10 +14,26 @@ const nextHandler = nextApp.getRequestHandler();
 
 let port = 3104;
 
+var socketEvents = require('./socketEvents');
+
 const secureServer = http.createServer({
-    //key: fse.readFileSync("/home/jgoolsby/SSR/jacksonvillians/ssl/privkey.pem"),
-    //cert: fse.readFileSync("/home/jgoolsby/SSR/jacksonvillians/ssl/fullchain.pem")
+    // key: fse.readFileSync("/home/jgoolsby/SSR/jacksonvillians/ssl/privkey.pem"),
+    // cert: fse.readFileSync("/home/jgoolsby/SSR/jacksonvillians/ssl/fullchain.pem")
 }, app);
+
+const io = require('socket.io')(secureServer)
+
+io.on('connection', (socket) => {
+
+    let gameCreator = socket.id;
+    console.log(gameCreator, ' is creator')
+    console.log(socket.handshake.query.created)
+    socketEvents(socket, io)
+
+    // if created == true, function for generating game code, return to creation and then storing
+
+
+})
 
 nextApp.prepare().then(() => {
 

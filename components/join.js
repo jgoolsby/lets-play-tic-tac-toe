@@ -11,10 +11,9 @@ function join() {
         if (code.length !== 5) {
             return;
         } else {
-            console.log(code)
+
             if (code === '12345') {
                 setGameFound(true)
-                // alert('GAME')
             }
         }
     }
