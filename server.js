@@ -25,12 +25,9 @@ const io = require('socket.io')(secureServer)
 
 io.on('connection', (socket) => {
 
-    let gameCreator = socket.id;
-    console.log(gameCreator, ' is creator')
-    console.log(socket.handshake.query.created)
     socketEvents(socket, io)
 
-    // if created == true, function for generating game code, return to creation and then storing
+
 
 
 })

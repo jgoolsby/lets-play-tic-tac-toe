@@ -15,10 +15,15 @@ const ENDPOINT = "http://127.0.0.1:3104";
 function multiplayer() {
 
     const [statusDisplay, setStatusDisplay] = useState(`Start Player ${currentPlayer}`);
+    const [gameCode, setGameCode] = useState('')
 
 
     useEffect(() => {
         socket = socketIOClient(ENDPOINT + "?created=" + 'true', { secure: true });
+        socket.on('gameCode', (e => {
+            setGameCode(e.gameCode)
+        })
+        )
     }, [])
 
     const handleCellClick = () => {
@@ -35,7 +40,7 @@ function multiplayer() {
                 width: '200px'
             }}>
                 <div style={{ textAlign: 'center' }}>Game Code</div>
-                <h2 style={{ textAlign: 'center' }}>12345</h2>
+                <h2 style={{ textAlign: 'center' }}>{gameCode}</h2>
             </div>
             <div>
                 <br />
