@@ -11,6 +11,16 @@ module.exports = function (socket, io) {
 
         io.to(gameCreator).emit('gameCode', { gameCode })
 
+        // Create Game in Mongo DB
+        // in tic-tac-toe-games
+        // Game ID
+        // CreatedBy
+        // Opponent 
+        // timeCreated
+        // Winner - L, W, C
+        // Active
+
+
     }
     // if created == true, function for generating game code, return to creation and then storing <-------
     // socket.on()
