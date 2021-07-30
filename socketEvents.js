@@ -1,3 +1,5 @@
+const mongoDB = require('./util/mongo');
+
 function generateGameCode() {
     return Math.random().toString().substr(2, 5)
 }
@@ -11,14 +13,17 @@ module.exports = function (socket, io) {
 
         io.to(gameCreator).emit('gameCode', { gameCode })
 
-        // Create Game in Mongo DB
-        // in tic-tac-toe-games
-        // Game ID
-        // CreatedBy
-        // Opponent 
-        // timeCreated
-        // Winner - L, W, C
-        // Active
+        let Game = require('./models/Game')('Games')
+
+        let newGame = new Game({ gameID: gameCode, createdBy: '11', opponent: '22', timeCreated: Date.now(), winner: '', active: true })
+
+        // Save Game to Database
+        newGame.save((error) => {
+            if (error) {
+                return console.log(`error has occurred: ${error}`);
+            }
+            // console.log('Document is successfully saved.');
+        });
 
 
     }

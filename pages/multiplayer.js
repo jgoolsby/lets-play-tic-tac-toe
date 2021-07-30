@@ -10,7 +10,7 @@ var currentPlayer = 'X'
 
 let socket;
 
-const ENDPOINT = "http://127.0.0.1:3104";
+const ENDPOINT = "http://99.14.164.122:3104";
 
 function multiplayer() {
 
