@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { withRouter } from 'next/router'
 
 import styles from '../styles/Multiplayer.module.css'
 
@@ -12,15 +13,17 @@ let socket;
 
 const ENDPOINT = "http://99.14.164.122:3104";
 
-function multiplayer() {
-
+function multiplayer(props) {
+    console.log(props, ' is props ')
     const [statusDisplay, setStatusDisplay] = useState(`Start Player ${currentPlayer}`);
     const [gameCode, setGameCode] = useState('')
 
 
     useEffect(() => {
-        socket = socketIOClient(ENDPOINT + "?created=" + 'true', { secure: true });
+
+        socket = socketIOClient(ENDPOINT + "?created=" + props.router.query.gc + "&gameCode=" + props.currentGameCode, { secure: true });
         socket.on('gameCode', (e => {
+            console.log(e, ' is ee e e e e e e e e')
             setGameCode(e.gameCode)
         })
         )
@@ -66,4 +69,4 @@ function multiplayer() {
     )
 }
 
-export default multiplayer
+export default withRouter(multiplayer)

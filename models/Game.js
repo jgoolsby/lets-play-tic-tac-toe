@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+var Schema = mongoose.Schema;
 
-const gameSchemas = mongoose.Schema({
+const gameSchemas = new Schema({
     gameID: {
         type: String,
         required: true
@@ -28,6 +29,5 @@ const gameSchemas = mongoose.Schema({
 })
 
 const Game = module.exports = function (collection) {
-    console.log(collection, ' is tcollections ')
     return mongoose.model('game', gameSchemas, collection)
 }

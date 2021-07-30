@@ -1,5 +1,27 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-export default function handler(req, res) {
+
+
+
+export default (req, res) => {
+
+  const { method } = req;
+
+  switch (method) {
+    case 'GET':
+      break
+    case 'POST':
+      break
+    case 'UPDATE':
+      break;
+    case 'DELETE':
+      break;
+    default:
+      res.setHeader('Allow', ['POST'])
+      res.status(405).end(`Method ${method} Not Allowed`)
+      res.end()
+  }
+
+
+
   res.status(200).json({ name: 'John Doe' })
 }

@@ -8,7 +8,7 @@ import SEARCH from '../components/search'
 
 import styles from '../styles/Join.module.css'
 
-function join() {
+function join(props) {
 
     const [loading, setLoading] = useState(false)
     const [currentStage, setCurrentStage] = useState('')
@@ -16,16 +16,14 @@ function join() {
 
     // JOIN
 
-
     // SEARCH
 
     // CREATE
 
     return (
         <div className={'container'} id="joinz">
-            {currentStage === 'join' ? (<JOIN />) : (currentStage === 'create' ? (<CREATE />) : currentStage === 'search' ? (<SEARCH />) : (
+            {currentStage === 'join' ? (<JOIN currentGameCode={props.currentGameCode} setCurrentGameCode={props.setCurrentGameCode} />) : (currentStage === 'create' ? (<CREATE />) : currentStage === 'search' ? (<SEARCH />) : (
                 <div>
-
                     <div onClick={() => setCurrentStage('join')} className={'card'} style={{ width: '400px' }}>
                         <h2>Join &rarr;</h2>
                         <p>Play with a friend. Join an already created game with a code.</p>

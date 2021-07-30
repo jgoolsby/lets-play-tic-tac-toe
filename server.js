@@ -27,9 +27,6 @@ io.on('connection', (socket) => {
 
     socketEvents(socket, io)
 
-
-
-
 })
 
 nextApp.prepare().then(() => {
