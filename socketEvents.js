@@ -21,7 +21,7 @@ function createGame(gameCode, gameCreator) {
 }
 
 module.exports = function (socket, io) {
-    let gameCreator = socket.id
+    let gamer = socket.id
     let gameCode
     // if game was created
     if (socket.handshake.query.created === 'true') {
@@ -32,20 +32,21 @@ module.exports = function (socket, io) {
         socket.join(gameCode)
 
         // Send Game Code to Creator
-        io.to(gameCreator).emit('gameCode', { gameCode })
+        io.to(gamer).emit('gameCode', { gameCode })
 
         // Create Game in Database
-        createGame(gameCode, gameCreator)
+        createGame(gameCode, gamer)
 
 
 
     } else {
         gameCode = socket.handshake.query.gameCode
 
-        io.to(gameCreator).emit('gameCode', { gameCode })
+        io.to(gamer).emit('gameCode', { gameCode })
 
         socket.join(gameCode)
 
+        io.sockets.in(gameCode).emit('intro', { username: 'testfuck' });
 
     }
 

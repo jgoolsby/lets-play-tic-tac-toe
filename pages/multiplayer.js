@@ -39,8 +39,10 @@ function Multiplayer(props) {
         // Socket listener for gameCode channel - will set gameCode state upon receive
         socket.on('gameCode', (e => {
             setGameCode(e.gameCode)
+        }))
+        socket.on('intro', (e) => {
+            console.log(e, ' is e ')
         })
-        )
 
     }, [])
 
