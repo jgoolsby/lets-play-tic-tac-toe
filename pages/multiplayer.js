@@ -8,19 +8,40 @@ import BlockElement from '../components/blockelement'
 
 import socketIOClient from "socket.io-client"
 
-var currentPlayer = 'X'
-
 let socket
 
 const ENDPOINT = "http://99.14.164.122:3104"
 
+const winningConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
+
 function Multiplayer(props) {
 
     const router = useRouter()
-
+    const [gameState, setGameState] = useState(["", "", "", "", "", "", "", "", ""]);
+    const [usedCells, setUsedCells] = useState([]);
     const [gameCode, setGameCode] = useState('')
     const [currentPlayerSign, setCurrentPlayerSign] = useState(null)
     const [statusDisplay, setStatusDisplay] = useState(``)
+    const [myTurn, setMyTurn] = useState(null)
+    const [opponentTurn, setOpponentTurn] = useState(null)
+    const [numOfTurns, setNumOfTurns] = useState(0)
+    const [maxTurns, setMaxTurns] = useState(9)
+    const [creator, setCreator] = useState(false)
+    const [gameActive, setGameActive] = useState(true);
+
+    // const handleCellPlayed = (clickedCell, clickedCellIndex) => {
+    //     gameState[clickedCellIndex] = currentPlayer;
+    //     clickedCell.innerHTML = currentPlayer;
+    // }
 
     useEffect(() => {
 
@@ -28,10 +49,12 @@ function Multiplayer(props) {
         socket = socketIOClient(ENDPOINT + "?created=" + props.router.query.gc + "&gameCode=" + props.currentGameCode, { secure: true })
 
         // if game creator, sign is O, non-game creator opponent is X
-        if (props.router.query.gc === 'true') {
+        if (props.router.query.gc === 'true' || props.router.query.gc === true) {
+            setCreator(true)
             setStatusDisplay(`Player O`)
             setCurrentPlayerSign('O')
         } else {
+            setCreator(false)
             setStatusDisplay(`Player X`)
             setCurrentPlayerSign('X')
         }
@@ -40,13 +63,52 @@ function Multiplayer(props) {
         socket.on('gameCode', (e => {
             setGameCode(e.gameCode)
         }))
-        socket.on('intro', (e) => {
-            console.log(e, ' is e ')
-        })
 
     }, [])
 
-    const handleCellClick = () => {
+    useEffect(() => {
+        if (myTurn) {
+            console.log(myTurn, opponentTurn, 'fkaljsdklasjdkljsd')
+            document.getElementById("game__container").style.pointerEvents = "all";
+        } else {
+            console.log(myTurn, opponentTurn, ' bumper')
+            document.getElementById("game__container").style.pointerEvents = "none";
+        }
+    }, [myTurn])
+
+    useEffect(() => {
+        socket.on('intro', (e) => {
+            if (creator) {
+                setMyTurn(false)
+                setOpponentTurn(true)
+                setStatusDisplay('Opponent ' + e.message)
+            } else {
+                setOpponentTurn(false)
+                setMyTurn(true)
+                setStatusDisplay('Your Turn')
+            }
+
+        })
+    }, [creator])
+
+    const handleCellPlayed = (clickedCell, clickedCellIndex) => {
+        gameState[clickedCellIndex] = currentPlayerSign;
+        clickedCell.innerHTML = currentPlayerSign;
+    }
+
+    const handleCellClick = (event, cellNumber) => {
+        const clickedCell = event.target;
+        setUsedCells(old => [...old, clickedCell])
+
+        console.log(usedCells, ' is used cells')
+        const clickedCellIndex = parseInt(cellNumber);
+
+        console.log(clickedCellIndex, ' is index cell')
+
+        if (gameState[clickedCellIndex] !== "" || !gameActive) {
+            return;
+        }
+        handleCellPlayed(clickedCell, clickedCellIndex);
 
     }
 
@@ -54,10 +116,23 @@ function Multiplayer(props) {
 
     }
 
+    const disableGameBoard = () => {
+
+    }
+
     // If game code is not set, redirect to Join lobby
     if (gameCode === 'null' || gameCode === null) {
         router.push({ pathname: '/join' })
     }
+
+    // if (opponentTurn) {
+    //     disableGameBoard()
+    // } else {
+    //     // if (document) {
+    //     enableGameBoard()
+    //     // }
+
+    // }
 
     return (
         <div className={'container'}>
@@ -71,7 +146,8 @@ function Multiplayer(props) {
                 <br />
                 <section>
                     <h1 className="game__title">Tic Tac Toe</h1>
-                    <div className="game__container">
+                    Player {currentPlayerSign}
+                    <div id="game__container" className="game__container">
                         <BlockElement handleCellClick={handleCellClick} index={0} />
                         <BlockElement handleCellClick={handleCellClick} index={1} />
                         <BlockElement handleCellClick={handleCellClick} index={2} />
@@ -82,9 +158,17 @@ function Multiplayer(props) {
                         <BlockElement handleCellClick={handleCellClick} index={7} />
                         <BlockElement handleCellClick={handleCellClick} index={8} />
                     </div>
-                    <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Your Turn</div>
+                    {/* {
+                        myTurn ? (
+                            <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Your Turn</div>
+                        ) : ('')
+                    }
+                    {opponentTurn ? (
+                        <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Waiting on Opponent</div>
+                    ) : ('')} */}
+                    {/* {waiting on opponent} */}
                     <h2 className="game__status">{statusDisplay}</h2>
-                    <button onClick={handleRestartGame} className="game__restart">Restart Game</button>
+                    <button onClick={disableGameBoard} className="game__restart">Restart Game</button>
                 </section>
 
             </div>

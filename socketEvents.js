@@ -40,13 +40,14 @@ module.exports = function (socket, io) {
 
 
     } else {
+        //Non creator
         gameCode = socket.handshake.query.gameCode
 
         io.to(gamer).emit('gameCode', { gameCode })
 
         socket.join(gameCode)
 
-        io.sockets.in(gameCode).emit('intro', { username: 'testfuck' });
+        io.sockets.in(gameCode).emit('intro', { message: ' has joined' });
 
     }
 
