@@ -29,16 +29,23 @@ module.exports = function (socket, io) {
         // Create GameCode
         gameCode = generateGameCode()
 
+        socket.join(gameCode)
+
         // Send Game Code to Creator
         io.to(gameCreator).emit('gameCode', { gameCode })
 
         // Create Game in Database
         createGame(gameCode, gameCreator)
 
+
+
     } else {
         gameCode = socket.handshake.query.gameCode
 
         io.to(gameCreator).emit('gameCode', { gameCode })
+
+        socket.join(gameCode)
+
 
     }
 

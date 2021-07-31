@@ -8,14 +8,14 @@ export default function Home() {
   return (
     <div className={'container'}>
       <Head>
-        <title>Let's Play Tic Tac Toe! </title>
+        <title>Let&apos;s Play Tic Tac Toe! </title>
         <meta name="description" content="Single and Multi-player Tic Tac Toe" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main >
         <h1 className={styles.title}>
-          Let's Play<br />  <a href="https://nextjs.org">Tic Tac Toe!</a>
+          Let&apos;s Play<br />  <a href="https://nextjs.org">Tic Tac Toe!</a>
         </h1>
 
         <p className={styles.description}>
@@ -24,20 +24,20 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <Link href="/single">
+          <Link href="/single" passHref>
             <div className={styles.card}>
               <h2>Single Player &rarr;</h2>
               <p>Find in-depth information about Next.js features and APIs.</p>
             </div>
           </Link>
 
-          <Link href="/join">
+          <Link href="/join" passHref>
             <div className={styles.card}>
               <h2>Multi-player &rarr;</h2>
               <p>Find in-depth information about Next.js features and API.</p>
             </div>
           </Link>
-          <Link href="/credits">
+          <Link href="/credits" passHref>
             <div
               className={styles.card}
             >

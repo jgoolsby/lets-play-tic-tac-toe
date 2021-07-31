@@ -8,7 +8,7 @@ import SEARCH from '../components/search'
 
 import styles from '../styles/Join.module.css'
 
-function join(props) {
+function Join(props) {
 
     const [loading, setLoading] = useState(false)
     const [currentStage, setCurrentStage] = useState('')
@@ -48,4 +48,4 @@ function join(props) {
     )
 }
 
-export default join
+export default Join

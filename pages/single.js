@@ -3,7 +3,7 @@ import styles from '../styles/Single.module.css'
 
 import BlockElement from '../components/blockelement'
 var currentPlayer = 'X';
-function single(props) {
+function Single(props) {
     const [statusDisplay, setStatusDisplay] = useState(`Start Player ${currentPlayer}`);
     const [gameActive, setGameActive] = useState(true);
     const [gameState, setGameState] = useState(["", "", "", "", "", "", "", "", ""]);
@@ -114,4 +114,4 @@ function single(props) {
     )
 }
 
-export default single
+export default Single

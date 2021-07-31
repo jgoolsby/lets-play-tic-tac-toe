@@ -8,7 +8,7 @@ import Image from 'next/image'
 
 import Arrow from '../public/arrow.svg'
 
-function join(props) {
+function Join(props) {
 
     const router = useRouter()
 
@@ -70,4 +70,4 @@ function join(props) {
     )
 }
 
-export default join
+export default Join

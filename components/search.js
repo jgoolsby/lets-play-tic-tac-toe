@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from 'next/router';
 
-function search() {
+function Search() {
 
     const router = useRouter();
 
@@ -22,5 +22,5 @@ function search() {
     )
 }
 
-export default search
+export default Search
 

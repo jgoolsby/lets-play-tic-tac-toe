@@ -19,7 +19,7 @@ function getByCode(code, res) {
 
 }
 
-export default async (req, res) => {
+const GameByCode = async (req, res) => {
 
     const { method } = req
 
@@ -42,3 +42,5 @@ export default async (req, res) => {
     }
 
 }
+
+export default GameByCode

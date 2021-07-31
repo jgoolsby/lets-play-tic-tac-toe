@@ -1,32 +1,47 @@
 import { useState, useEffect } from 'react'
-import { withRouter } from 'next/router'
+
+import { withRouter, useRouter } from 'next/router'
 
 import styles from '../styles/Multiplayer.module.css'
 
 import BlockElement from '../components/blockelement'
 
-import socketIOClient from "socket.io-client";
+import socketIOClient from "socket.io-client"
 
 var currentPlayer = 'X'
 
-let socket;
+let socket
 
-const ENDPOINT = "http://99.14.164.122:3104";
+const ENDPOINT = "http://99.14.164.122:3104"
 
-function multiplayer(props) {
-    console.log(props, ' is props ')
-    const [statusDisplay, setStatusDisplay] = useState(`Start Player ${currentPlayer}`);
+function Multiplayer(props) {
+
+    const router = useRouter()
+
     const [gameCode, setGameCode] = useState('')
-
+    const [currentPlayerSign, setCurrentPlayerSign] = useState(null)
+    const [statusDisplay, setStatusDisplay] = useState(``)
 
     useEffect(() => {
 
-        socket = socketIOClient(ENDPOINT + "?created=" + props.router.query.gc + "&gameCode=" + props.currentGameCode, { secure: true });
+        // Connect to Socket IO client
+        socket = socketIOClient(ENDPOINT + "?created=" + props.router.query.gc + "&gameCode=" + props.currentGameCode, { secure: true })
+
+        // if game creator, sign is O, non-game creator opponent is X
+        if (props.router.query.gc === 'true') {
+            setStatusDisplay(`Player O`)
+            setCurrentPlayerSign('O')
+        } else {
+            setStatusDisplay(`Player X`)
+            setCurrentPlayerSign('X')
+        }
+
+        // Socket listener for gameCode channel - will set gameCode state upon receive
         socket.on('gameCode', (e => {
-            console.log(e, ' is ee e e e e e e e e')
             setGameCode(e.gameCode)
         })
         )
+
     }, [])
 
     const handleCellClick = () => {
@@ -35,6 +50,11 @@ function multiplayer(props) {
 
     const handleRestartGame = () => {
 
+    }
+
+    // If game code is not set, redirect to Join lobby
+    if (gameCode === 'null' || gameCode === null) {
+        router.push({ pathname: '/join' })
     }
 
     return (
@@ -60,6 +80,7 @@ function multiplayer(props) {
                         <BlockElement handleCellClick={handleCellClick} index={7} />
                         <BlockElement handleCellClick={handleCellClick} index={8} />
                     </div>
+                    <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Your Turn</div>
                     <h2 className="game__status">{statusDisplay}</h2>
                     <button onClick={handleRestartGame} className="game__restart">Restart Game</button>
                 </section>
@@ -69,4 +90,4 @@ function multiplayer(props) {
     )
 }
 
-export default withRouter(multiplayer)
+export default withRouter(Multiplayer)

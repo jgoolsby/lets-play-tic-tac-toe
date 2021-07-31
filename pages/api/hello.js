@@ -2,7 +2,7 @@
 
 
 
-export default (req, res) => {
+const Hello = () => (req, res) => {
 
   const { method } = req;
 
@@ -25,3 +25,6 @@ export default (req, res) => {
 
   res.status(200).json({ name: 'John Doe' })
 }
+
+
+export default Hello

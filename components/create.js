@@ -1,7 +1,8 @@
 import { useEffect } from "react"
+
 import { useRouter } from 'next/router'
 
-function create(props) {
+function Create(props) {
 
     const router = useRouter()
 
@@ -13,10 +14,7 @@ function create(props) {
         const timer = setTimeout(() => {
             router.push({ pathname: '/multiplayer', query: { gc: 'true' } }) // send yes if created true and get on other side
         }, 2100);
-        return () => clearTimeout(timer);
-
-
-
+        return () => clearTimeout(timer)
     }, [])
 
     return (
@@ -26,4 +24,4 @@ function create(props) {
     )
 }
 
-export default create
+export default Create
