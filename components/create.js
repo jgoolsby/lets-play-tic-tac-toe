@@ -12,7 +12,7 @@ function Create(props) {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            router.push({ pathname: '/multiplayer', query: { gc: 'true' } }) // send yes if created true and get on other side
+            router.push({ pathname: '/multiplayer/c', query: { gc: 'true' } }) // send yes if created true and get on other side
         }, 2100);
         return () => clearTimeout(timer)
     }, [])

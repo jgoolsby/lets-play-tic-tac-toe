@@ -21,7 +21,7 @@ const winningConditions = [
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6]
-];
+]
 
 function Multiplayer(props) {
 
@@ -31,7 +31,7 @@ function Multiplayer(props) {
     const [gameCode, setGameCode] = useState('')
     const [currentPlayerSign, setCurrentPlayerSign] = useState(null)
     const [statusDisplay, setStatusDisplay] = useState(``)
-    const [myTurn, setMyTurn] = useState(null)
+    const [creatorTurn, setCreatorTurn] = useState(null)
     const [opponentTurn, setOpponentTurn] = useState(null)
     const [numOfTurns, setNumOfTurns] = useState(0)
     const [maxTurns, setMaxTurns] = useState(9)
@@ -64,53 +64,92 @@ function Multiplayer(props) {
             setGameCode(e.gameCode)
         }))
 
+        socket.on('gameboards', (e) => {
+            let xp = document.getElementById(e.clickedCell)
+            xp.innerHTML = e.currentPlayerSign;
+
+            // call handleResultValidation - if no winnder, then run code below
+            console.log(creatorTurn, ' is creator turn')
+            console.log(opponentTurn, ' is oponoent ')
+            // setCreatorTurn(!creatorTurn)
+            // setOpponentTurn(!opponentTurn)
+        })
+
     }, [])
 
     useEffect(() => {
-        if (myTurn) {
-            console.log(myTurn, opponentTurn, 'fkaljsdklasjdkljsd')
+        console.log('switching turns')
+        if (creatorTurn) {
+            console.log(creatorTurn, opponentTurn, 'fkaljsdklasjdkljsd')
             document.getElementById("game__container").style.pointerEvents = "all";
         } else {
-            console.log(myTurn, opponentTurn, ' bumper')
+            console.log(creatorTurn, opponentTurn, ' bumper')
             document.getElementById("game__container").style.pointerEvents = "none";
         }
-    }, [myTurn])
+    }, [creatorTurn])
 
+    const handleResultValidation = () => {
+
+
+
+
+
+
+
+    }
+
+    const handleCellPlayed = (clickedCell, clickedCellIndex) => {
+
+        let Str = JSON.stringify(clickedCellIndex)
+
+        // Add game sign to gameboard state
+        gameState[clickedCellIndex] = currentPlayerSign
+
+        // Show game state change on gameboard real-time
+        clickedCell.innerHTML = currentPlayerSign
+
+        // send move to opponent gameboard via socket 
+        socket.emit(`gameboard-${gameCode}`, { currentPlayerSign, clickedCell: Str })
+
+    }
+
+    const handleCellClick = (event, cellNumber) => {
+
+        // Get HTML of # of cell clicked to be used later for innerHTML update 
+        const clickedCell = event.target
+
+        // Get index of clicked cell
+        const clickedCellIndex = parseInt(cellNumber)
+
+        // set Used cell in array  - cycle through to make sure it is only added once
+        setUsedCells(old => [...old, clickedCellIndex])
+
+        if (gameState[clickedCellIndex] !== "" || !gameActive) {
+            return;
+        }
+
+        // adds clicked cell to game state function/show change on screen
+        handleCellPlayed(clickedCell, clickedCellIndex)
+
+    }
+
+    // On initial Load 
     useEffect(() => {
         socket.on('intro', (e) => {
             if (creator) {
-                setMyTurn(false)
+                console.log('creator screen')
+                setCreatorTurn(false)
                 setOpponentTurn(true)
                 setStatusDisplay('Opponent ' + e.message)
             } else {
+                console.log('oppo screen')
                 setOpponentTurn(false)
-                setMyTurn(true)
+                setCreatorTurn(true)
                 setStatusDisplay('Your Turn')
             }
 
         })
     }, [creator])
-
-    const handleCellPlayed = (clickedCell, clickedCellIndex) => {
-        gameState[clickedCellIndex] = currentPlayerSign;
-        clickedCell.innerHTML = currentPlayerSign;
-    }
-
-    const handleCellClick = (event, cellNumber) => {
-        const clickedCell = event.target;
-        setUsedCells(old => [...old, clickedCell])
-
-        console.log(usedCells, ' is used cells')
-        const clickedCellIndex = parseInt(cellNumber);
-
-        console.log(clickedCellIndex, ' is index cell')
-
-        if (gameState[clickedCellIndex] !== "" || !gameActive) {
-            return;
-        }
-        handleCellPlayed(clickedCell, clickedCellIndex);
-
-    }
 
     const handleRestartGame = () => {
 

@@ -45,7 +45,7 @@ function Join(props) {
     }
 
     const joinGame = () => {
-        router.push({ pathname: '/multiplayer', query: { gc: false } })
+        router.push({ pathname: '/multiplayer/' })
     }
 
     return (

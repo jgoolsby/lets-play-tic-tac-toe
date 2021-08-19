@@ -6,6 +6,7 @@ function blockelement(props) {
             onClick={(e) => props.handleCellClick(e, props.index)}
             data-cell-index={props.index}
             className="cell"
+            id={props.index}
         >
         </div>
     )

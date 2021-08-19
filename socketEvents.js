@@ -24,6 +24,7 @@ module.exports = function (socket, io) {
     let gamer = socket.id
     let gameCode
     // if game was created
+    console.log(socket.handshake.query, ' is query ')
     if (socket.handshake.query.created === 'true') {
 
         // Create GameCode
@@ -47,8 +48,14 @@ module.exports = function (socket, io) {
 
         socket.join(gameCode)
 
-        io.sockets.in(gameCode).emit('intro', { message: ' has joined' });
+        io.sockets.in(gameCode).emit('intro', { message: ' has joined' })
 
     }
+
+    socket.on(`gameboard-${gameCode}`, (e) => {
+        console.log(e, ' is da e mofo') // tyhis is for login page
+        io.sockets.in(gameCode).emit('gameboards', e)
+        // socket.broadcast.emit('gameboards', { cat: 'farte' })
+    })
 
 }
