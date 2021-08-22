@@ -28,8 +28,8 @@ let sign
 function o(props) {
 
     const router = useRouter()
-    const [gameState, setGameState] = useState(["", "", "", "", "", "", "", "", ""]);
-    const [usedCells, setUsedCells] = useState([]);
+    const [gameState, setGameState] = useState(["", "", "", "", "", "", "", "", ""])
+    const [usedCells, setUsedCells] = useState([])
     const [gameCode, setGameCode] = useState('')
     const [currentPlayerSign, setCurrentPlayerSign] = useState(null)
     const [statusDisplay, setStatusDisplay] = useState(``)
@@ -39,6 +39,8 @@ function o(props) {
     const [maxTurns, setMaxTurns] = useState(9)
     const [creator, setCreator] = useState(false)
     const [gameActive, setGameActive] = useState(true)
+    const [gameOver, setGameOver] = useState(false)
+    const [catsGame, setCatsGame] = useState(false)
 
     useEffect(() => {
 
@@ -56,28 +58,42 @@ function o(props) {
         }))
 
         socket.on('gameboards', (e) => {
-
+            console.log(e, 'is e game board')
+            gameState[e.clickedCell] = e.currentPlayerSign
             let xp = document.getElementById(e.clickedCell)
             xp.innerHTML = e.currentPlayerSign;
             // call handleResultValidation - if no winnder, then run code below
 
             let tempNumofTurns = e.numOfTurns + 1
-            console.log(tempNumofTurns, ' ifafafafafafa')
+
             setNumOfTurns(tempNumofTurns)
-            console.log(e, ' is gameboard e', numOfTurns)
+
             if (e.currentPlayerSign !== sign) {
                 setMyTurn(!myTurn)
                 setOpponentTurn(!opponentTurn)
             }
         })
 
+        socket.on('gameover', (e) => {
+            setGameOver(true)
+            document.getElementById("game__container").style.pointerEvents = "none"
+            setStatusDisplay(`Player ${e.currentPlayerSign} Wins!`)
+        })
+
+        socket.on('draw', (e) => {
+            document.getElementById("game__container").style.pointerEvents = "none"
+            setGameOver(true)
+            setCatsGame(true)
+        })
     }, [])
 
     useEffect(() => {
         if (myTurn) {
-            document.getElementById("game__container").style.pointerEvents = "all";
+            setStatusDisplay('Your Turn')
+            document.getElementById("game__container").style.pointerEvents = "all"
         } else {
-            document.getElementById("game__container").style.pointerEvents = "none";
+            setStatusDisplay('')
+            document.getElementById("game__container").style.pointerEvents = "none"
         }
     }, [myTurn])
 
@@ -105,6 +121,44 @@ function o(props) {
 
         setMyTurn(false)
         setOpponentTurn(true)
+        handleResultValidation()
+
+    }
+
+    const handleResultValidation = () => {
+        let roundWon = false;
+        for (let i = 0; i <= 7; i++) {
+            const winCondition = winningConditions[i];
+            let a = gameState[winCondition[0]];
+            let b = gameState[winCondition[1]];
+            let c = gameState[winCondition[2]];
+            if (a === '' || b === '' || c === '') {
+                continue;
+            }
+            if (a === b && b === c) {
+                roundWon = true;
+                break;
+            }
+        }
+
+        if (roundWon) {
+            // send message over websockets to opponent with currentplayer sign
+            socket.emit('gameover', { currentPlayerSign, status: true })
+            // setStatusDisplay(winningMessage);
+            setGameActive(false);
+            return;
+        }
+
+        let roundDraw = !gameState.includes("");
+
+        if (roundDraw) {
+            socket.emit('draw', { status: true })
+            setGameActive(false)
+            setStatusDisplay('')
+            setGameOver(true)
+            setCatsGame(true)
+            return;
+        }
 
     }
 
@@ -136,6 +190,10 @@ function o(props) {
     if (gameCode === 'null' || gameCode === null) {
         router.push({ pathname: '/join' })
     }
+
+    // if (numOfTurns >= 3) {
+    //     // handleResultValidation()
+    // }
 
     if (numOfTurns >= maxTurns) {
         disableGameBoard()
@@ -174,6 +232,8 @@ function o(props) {
                         <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Waiting on Opponent</div>
                     ) : ('')} */}
                     {/* {waiting on opponent} */}
+                    <h2>{gameOver ? ('Game Over') : ('')}</h2>
+                    <h2>{catsGame ? ('Cat\'s Game') : ('')}</h2>
                     <h2 className="game__status">{statusDisplay}</h2>
                     {/* <button onClick={disableGameBoard} className="game__restart">Restart Game</button> */}
                 </section>

@@ -38,7 +38,10 @@ function c(props) {
     const [numOfTurns, setNumOfTurns] = useState(0)
     const [maxTurns, setMaxTurns] = useState(9)
     const [creator, setCreator] = useState(false)
-    const [gameActive, setGameActive] = useState(true);
+    const [gameActive, setGameActive] = useState(true)
+    const [gameOver, setGameOver] = useState(false)
+    const [catsGame, setCatsGame] = useState(false)
+    const winningMessage = () => `Player  aksldjalksdj has won!`
 
     useEffect(() => {
 
@@ -51,7 +54,7 @@ function c(props) {
         setCreator(true)
         setOpponentTurn(true)
         setMyTurn(false)
-        setStatusDisplay(`Player O`)
+        // setStatusDisplay(`Player O`)
         sign = 'O'
 
         // } 
@@ -62,16 +65,36 @@ function c(props) {
         }))
 
         socket.on('gameboards', (e) => {
+            gameState[e.clickedCell] = e.currentPlayerSign
             let xp = document.getElementById(e.clickedCell)
             xp.innerHTML = e.currentPlayerSign
+
             let tempNumofTurns = e.numOfTurns + 1
-            console.log(tempNumofTurns, ' ifafafafafafa')
+
             setNumOfTurns(tempNumofTurns)
             if (e.currentPlayerSign !== sign) {
                 setMyTurn(!myTurn)
                 setOpponentTurn(!opponentTurn)
             }
-            console.log(e, ' is gameboard e', numOfTurns)
+
+        })
+
+        socket.on('gameover', (e) => {
+
+            // Set Game Over 
+            setGameOver(true)
+
+            // Lock Game Board 
+            document.getElementById("game__container").style.pointerEvents = "none"
+
+            // Player Wins message
+            setStatusDisplay(`Player ${e.currentPlayerSign} Wins!`)
+        })
+
+        socket.on('draw', (e) => {
+            setGameOver(true)
+            setCatsGame(true)
+            document.getElementById("game__container").style.pointerEvents = "none"
         })
 
     }, [])
@@ -88,9 +111,11 @@ function c(props) {
 
         // send move to opponent gameboard via socket 
         socket.emit(`gameboard-${gameCode}`, { currentPlayerSign, clickedCell: Str, numOfTurns })
-
+        setStatusDisplay('')
         setMyTurn(false)
         setOpponentTurn(true)
+
+        handleResultValidation()
 
     }
 
@@ -103,8 +128,10 @@ function c(props) {
     useEffect(() => {
 
         if (myTurn || myTurn === 'true') {
+            setStatusDisplay('Your Turn')
             document.getElementById("game__container").style.pointerEvents = "all"
         } else {
+            setStatusDisplay('')
             document.getElementById("game__container").style.pointerEvents = "none"
         }
     }, [myTurn])
@@ -126,6 +153,42 @@ function c(props) {
 
         // adds clicked cell to game state function/show change on screen
         handleCellPlayed(clickedCell, clickedCellIndex)
+
+    }
+
+    const handleResultValidation = () => {
+        let roundWon = false;
+        for (let i = 0; i <= 7; i++) {
+            const winCondition = winningConditions[i];
+            let a = gameState[winCondition[0]];
+            let b = gameState[winCondition[1]];
+            let c = gameState[winCondition[2]];
+            if (a === '' || b === '' || c === '') {
+                continue;
+            }
+            if (a === b && b === c) {
+                roundWon = true;
+                break;
+            }
+        }
+
+        if (roundWon) {
+            socket.emit('gameover', { currentPlayerSign, status: true })
+            setStatusDisplay(winningMessage)
+            setGameActive(false)
+            return;
+        }
+
+        let roundDraw = !gameState.includes("")
+
+        if (roundDraw) {
+            socket.emit('draw', { status: true })
+            setGameOver(true)
+            setStatusDisplay('')
+            setCatsGame(true)
+            setGameActive(false)
+            return;
+        }
 
     }
 
@@ -171,15 +234,8 @@ function c(props) {
                         <BlockElement handleCellClick={handleCellClick} index={7} />
                         <BlockElement handleCellClick={handleCellClick} index={8} />
                     </div>
-                    {/* {
-                        myTurn ? (
-                            <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Your Turn</div>
-                        ) : ('')
-                    }
-                    {opponentTurn ? (
-                        <div style={{ borderRadius: '6px', margin: 0, padding: 0, color: 'green', fontSize: '16' }}>Waiting on Opponent</div>
-                    ) : ('')} */}
-                    {/* {waiting on opponent} */}
+                    <h2>{gameOver ? ('Game Over') : ('')}</h2>
+                    <h2>{catsGame ? ('Cat\'s Game') : ('')}</h2>
                     <h2 className="game__status">{statusDisplay}</h2>
                     <button onClick={disableGameBoard} className="game__restart">Restart Game</button>
                 </section>
