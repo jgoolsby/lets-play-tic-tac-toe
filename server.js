@@ -17,8 +17,8 @@ let port = 3104;
 var socketEvents = require('./socketEvents');
 
 const secureServer = http.createServer({
-    // key: fse.readFileSync("/home/jgoolsby/SSR/jacksonvillians/ssl/privkey.pem"),
-    // cert: fse.readFileSync("/home/jgoolsby/SSR/jacksonvillians/ssl/fullchain.pem")
+    // key: fse.readFileSync("/home/{username}/SSR/jacksonvillians/ssl/privkey.pem"),
+    // cert: fse.readFileSync("/home/{username}/SSR/jacksonvillians/ssl/fullchain.pem")
 }, app);
 
 const io = require('socket.io')(secureServer)
